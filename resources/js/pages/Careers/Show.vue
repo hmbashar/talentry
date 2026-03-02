@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ArrowLeft, Briefcase, Calendar, CheckCircle, Loader2, MapPin, Paperclip } from 'lucide-vue-next';
 import { onMounted, ref } from 'vue';
 import api from '@/lib/api';
 
@@ -10,7 +11,7 @@ const form = ref({ name: '', email: '', phone: '', cover_letter: '', resume: nul
 const submitting = ref(false);
 const submitted = ref(false);
 const errors = ref<Record<string, string>>({});
-const uploadLabel = ref('Click to upload your resume (PDF or Word, max 5MB)');
+const uploadLabel = ref('Click to upload resume (PDF or Word, max 5 MB)');
 
 onMounted(async () => {
     const { data } = await api.get(`/public/jobs/${props.uuid}`);
@@ -37,7 +38,6 @@ async function apply() {
         if (form.value.phone) formData.append('phone', form.value.phone);
         if (form.value.cover_letter) formData.append('cover_letter', form.value.cover_letter);
         formData.append('resume', form.value.resume);
-
         await api.post(`/public/jobs/${props.uuid}/apply`, formData, {
             headers: { 'Content-Type': 'multipart/form-data' },
         });
@@ -52,111 +52,167 @@ async function apply() {
         submitting.value = false;
     }
 }
+
+const typeColors: Record<string, string> = {
+    full_time: 'bg-blue-50 text-blue-700 ring-1 ring-blue-200',
+    part_time: 'bg-amber-50 text-amber-700 ring-1 ring-amber-200',
+    contract: 'bg-purple-50 text-purple-700 ring-1 ring-purple-200',
+    remote: 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200',
+};
 </script>
 
 <template>
-    <div class="min-h-screen bg-gray-50 dark:bg-gray-950">
-        <header class="border-b border-gray-100 bg-white dark:border-gray-800 dark:bg-gray-900">
-            <div class="mx-auto max-w-3xl px-6 py-5">
-                <a href="/careers" class="text-sm text-blue-600 hover:underline dark:text-blue-400">← Back to Careers</a>
+    <div class="min-h-screen bg-white font-sans antialiased">
+        <!-- NAV -->
+        <header class="sticky top-0 z-50 border-b border-slate-100 bg-white/95 backdrop-blur">
+            <div class="mx-auto flex max-w-4xl items-center justify-between px-6 py-4">
+                <a href="/" class="flex items-center gap-2">
+                    <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-linear-to-br from-violet-600 to-indigo-600">
+                        <Briefcase class="h-4 w-4 text-white" />
+                    </div>
+                    <span class="text-xl font-bold tracking-tight text-slate-900">Talentry</span>
+                </a>
+                <a href="/careers" class="flex items-center gap-1.5 text-sm font-medium text-slate-500 transition hover:text-violet-600">
+                    <ArrowLeft class="h-4 w-4" /> All Jobs
+                </a>
             </div>
         </header>
 
-        <main class="mx-auto max-w-3xl px-6 py-10">
-            <div v-if="loading" class="animate-pulse space-y-4">
-                <div class="h-8 w-64 rounded bg-gray-200 dark:bg-gray-700"></div>
-                <div class="h-4 w-48 rounded bg-gray-100 dark:bg-gray-700"></div>
-            </div>
+        <!-- LOADING -->
+        <div v-if="loading" class="mx-auto max-w-4xl space-y-4 px-6 py-14 animate-pulse">
+            <div class="h-10 w-3/4 rounded-xl bg-slate-100"></div>
+            <div class="h-5 w-48 rounded bg-slate-100"></div>
+            <div class="mt-6 h-64 rounded-2xl bg-slate-100"></div>
+        </div>
 
-            <template v-else-if="job">
-                <div class="mb-8">
-                    <h1 class="text-3xl font-bold text-gray-900 dark:text-white">{{ job.title }}</h1>
-                    <p class="mt-2 text-sm text-gray-500">📍 {{ job.location }} · {{ job.employment_type_label }}</p>
-                    <div v-if="job.deadline" class="mt-1 text-xs text-gray-400">Deadline: {{ job.deadline }}</div>
-                </div>
-
-                <!-- Description -->
-                <div class="prose dark:prose-invert mb-10 max-w-none rounded-xl border border-gray-100 bg-white p-6 text-sm dark:border-gray-700 dark:bg-gray-800">
-                    <p class="whitespace-pre-wrap text-gray-700 dark:text-gray-300">{{ job.description }}</p>
-                </div>
-
-                <!-- Success -->
-                <div
-                    v-if="submitted"
-                    class="rounded-xl border border-green-200 bg-green-50 p-8 text-center dark:border-green-700 dark:bg-green-900/30"
-                >
-                    <p class="text-2xl">🎉</p>
-                    <h2 class="mt-2 text-xl font-semibold text-green-800 dark:text-green-300">Application Submitted!</h2>
-                    <p class="mt-1 text-sm text-green-600 dark:text-green-400">Thank you for applying. We'll review your application and be in touch soon.</p>
-                </div>
-
-                <!-- Apply Form -->
-                <div v-else class="rounded-xl border border-gray-100 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-                    <h2 class="mb-6 text-xl font-semibold text-gray-900 dark:text-white">Apply for this position</h2>
-                    <form class="space-y-5" @submit.prevent="apply">
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Full Name *</label>
-                                <input
-                                    v-model="form.name"
-                                    type="text"
-                                    required
-                                    class="w-full rounded-lg border px-3 py-2 text-sm focus:border-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-                                    :class="errors.name ? 'border-red-400' : 'border-gray-200'"
-                                />
-                                <p v-if="errors.name" class="mt-1 text-xs text-red-500">{{ errors.name }}</p>
-                            </div>
-                            <div>
-                                <label class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Email *</label>
-                                <input
-                                    v-model="form.email"
-                                    type="email"
-                                    required
-                                    class="w-full rounded-lg border px-3 py-2 text-sm focus:border-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-                                    :class="errors.email ? 'border-red-400' : 'border-gray-200'"
-                                />
-                                <p v-if="errors.email" class="mt-1 text-xs text-red-500">{{ errors.email }}</p>
+        <template v-else-if="job">
+            <!-- JOB HERO -->
+            <section class="bg-linear-to-br from-slate-950 via-violet-950 to-indigo-950 pb-12 pt-12 text-white">
+                <div class="mx-auto max-w-4xl px-6">
+                    <div class="flex items-start gap-5">
+                        <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/15 ring-1 ring-white/20">
+                            <Briefcase class="h-7 w-7" />
+                        </div>
+                        <div>
+                            <h1 class="text-3xl font-extrabold tracking-tight lg:text-4xl">{{ job.title }}</h1>
+                            <div class="mt-2 flex flex-wrap items-center gap-4 text-sm text-slate-300">
+                                <span v-if="job.location" class="flex items-center gap-1.5">
+                                    <MapPin class="h-4 w-4" />{{ job.location }}
+                                </span>
+                                <span v-if="job.deadline" class="flex items-center gap-1.5">
+                                    <Calendar class="h-4 w-4" />Apply by {{ job.deadline }}
+                                </span>
+                                <span
+                                    v-if="job.employment_type"
+                                    class="rounded-full px-3 py-0.5 text-xs font-medium"
+                                    :class="typeColors[job.employment_type] ?? 'bg-white/10 text-white'"
+                                >
+                                    {{ job.employment_type_label }}
+                                </span>
                             </div>
                         </div>
-                        <div>
-                            <label class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Phone</label>
-                            <input
-                                v-model="form.phone"
-                                type="tel"
-                                class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-                            />
-                        </div>
-                        <div>
-                            <label class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Cover Letter</label>
-                            <textarea
-                                v-model="form.cover_letter"
-                                rows="5"
-                                class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-                                placeholder="Tell us why you're a great fit..."
-                            ></textarea>
-                        </div>
-                        <div>
-                            <label class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Resume *</label>
-                            <label
-                                class="flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed px-6 py-8 transition hover:bg-gray-50 dark:hover:bg-gray-700/30"
-                                :class="errors.resume ? 'border-red-400' : 'border-gray-200 dark:border-gray-600'"
-                            >
-                                <span class="mb-1 text-2xl">📎</span>
-                                <span class="text-center text-sm text-gray-500 dark:text-gray-400">{{ uploadLabel }}</span>
-                                <input type="file" class="hidden" accept=".pdf,.doc,.docx" @change="onFileChange" />
-                            </label>
-                            <p v-if="errors.resume" class="mt-1 text-xs text-red-500">{{ errors.resume }}</p>
-                        </div>
-                        <button
-                            type="submit"
-                            :disabled="submitting || !form.resume"
-                            class="w-full rounded-lg bg-blue-600 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:opacity-50"
-                        >
-                            {{ submitting ? 'Submitting...' : 'Submit Application' }}
-                        </button>
-                    </form>
+                    </div>
                 </div>
-            </template>
-        </main>
+            </section>
+
+            <main class="mx-auto max-w-4xl px-6 py-10">
+                <div class="grid gap-8 lg:grid-cols-5">
+                    <!-- Description -->
+                    <div class="lg:col-span-3">
+                        <h2 class="mb-4 text-lg font-semibold text-slate-900">Job Description</h2>
+                        <div class="rounded-2xl border border-slate-100 bg-slate-50 p-6">
+                            <p class="whitespace-pre-wrap text-sm leading-relaxed text-slate-700">{{ job.description }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Apply Form / Success -->
+                    <div class="lg:col-span-2">
+                        <!-- Success -->
+                        <div v-if="submitted" class="flex flex-col items-center rounded-2xl bg-linear-to-br from-violet-600 to-indigo-600 p-8 text-center text-white shadow-lg">
+                            <CheckCircle class="mb-3 h-12 w-12" />
+                            <h2 class="text-xl font-bold">Application Submitted!</h2>
+                            <p class="mt-2 text-sm text-violet-200">Thank you for applying. We’ll review your submission and be in touch soon.</p>
+                            <a href="/careers" class="mt-6 rounded-xl bg-white/20 px-5 py-2.5 text-sm font-semibold ring-1 ring-white/30 transition hover:bg-white/30">
+                                Browse More Jobs
+                            </a>
+                        </div>
+
+                        <!-- Form -->
+                        <div v-else class="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+                            <h2 class="mb-5 text-lg font-semibold text-slate-900">Apply Now</h2>
+                            <form class="space-y-4" @submit.prevent="apply">
+                                <div>
+                                    <label class="mb-1 block text-xs font-semibold text-slate-700">Full Name *</label>
+                                    <input
+                                        v-model="form.name"
+                                        type="text"
+                                        required
+                                        placeholder="Jane Doe"
+                                        class="w-full rounded-xl border px-3.5 py-2.5 text-sm shadow-sm outline-none transition focus:ring-2 focus:ring-violet-500"
+                                        :class="errors.name ? 'border-red-400' : 'border-slate-200'"
+                                    />
+                                    <p v-if="errors.name" class="mt-1 text-xs text-red-500">{{ errors.name }}</p>
+                                </div>
+                                <div>
+                                    <label class="mb-1 block text-xs font-semibold text-slate-700">Email *</label>
+                                    <input
+                                        v-model="form.email"
+                                        type="email"
+                                        required
+                                        placeholder="jane@example.com"
+                                        class="w-full rounded-xl border px-3.5 py-2.5 text-sm shadow-sm outline-none transition focus:ring-2 focus:ring-violet-500"
+                                        :class="errors.email ? 'border-red-400' : 'border-slate-200'"
+                                    />
+                                    <p v-if="errors.email" class="mt-1 text-xs text-red-500">{{ errors.email }}</p>
+                                </div>
+                                <div>
+                                    <label class="mb-1 block text-xs font-semibold text-slate-700">Phone</label>
+                                    <input
+                                        v-model="form.phone"
+                                        type="tel"
+                                        placeholder="+1 555 000 000"
+                                        class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm shadow-sm outline-none transition focus:ring-2 focus:ring-violet-500"
+                                    />
+                                </div>
+                                <div>
+                                    <label class="mb-1 block text-xs font-semibold text-slate-700">Cover Letter</label>
+                                    <textarea
+                                        v-model="form.cover_letter"
+                                        rows="4"
+                                        placeholder="Tell us why you’re a great fit…"
+                                        class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm shadow-sm outline-none transition focus:ring-2 focus:ring-violet-500"
+                                    ></textarea>
+                                </div>
+                                <div>
+                                    <label class="mb-1 block text-xs font-semibold text-slate-700">Resume *</label>
+                                    <label
+                                        class="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed py-7 transition hover:bg-violet-50"
+                                        :class="errors.resume ? 'border-red-400' : 'border-slate-200 hover:border-violet-400'"
+                                    >
+                                        <Paperclip class="h-6 w-6 text-slate-400" />
+                                        <span class="text-center text-xs text-slate-500">{{ uploadLabel }}</span>
+                                        <input type="file" class="hidden" accept=".pdf,.doc,.docx" @change="onFileChange" />
+                                    </label>
+                                    <p v-if="errors.resume" class="mt-1 text-xs text-red-500">{{ errors.resume }}</p>
+                                </div>
+                                <button
+                                    type="submit"
+                                    :disabled="submitting || !form.resume"
+                                    class="flex w-full items-center justify-center gap-2 rounded-xl bg-linear-to-br from-violet-600 to-indigo-600 py-3 text-sm font-bold text-white shadow transition hover:opacity-90 disabled:opacity-60"
+                                >
+                                    <Loader2 v-if="submitting" class="h-4 w-4 animate-spin" />
+                                    {{ submitting ? 'Submitting…' : 'Submit Application' }}
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </template>
+
+        <!-- FOOTER -->
+        <footer class="border-t border-slate-100 py-8 text-center text-xs text-slate-400">
+            &copy; {{ new Date().getFullYear() }} Talentry
+        </footer>
     </div>
 </template>

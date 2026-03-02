@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/AppLayout.vue';
 import api from '@/lib/api';
 
@@ -118,8 +117,7 @@ const iconOptions = ['UserPlus', 'Search', 'CheckCircle', 'Briefcase', 'Star', '
                         </div>
                         <div class="space-y-1.5">
                             <Label>Subtext</Label>
-                            <Textarea v-model="form.hero_subtitle" rows="2" placeholder="Connecting top talent with world-class companies…" />
-                        </div>
+                            <textarea v-model="form.hero_subtitle" rows="2" placeholder="Connecting top talent with world-class companies…" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring" /></div>
                         <div class="grid gap-4 sm:grid-cols-2">
                             <div class="space-y-1.5">
                                 <Label>Primary CTA Button</Label>
@@ -245,8 +243,7 @@ const iconOptions = ['UserPlus', 'Search', 'CheckCircle', 'Briefcase', 'Star', '
                         </div>
                         <div class="space-y-1.5">
                             <Label>Subtitle</Label>
-                            <Textarea v-model="form.apply_section_subtitle" rows="2" placeholder="Submit a quick application…" />
-                        </div>
+                            <textarea v-model="form.apply_section_subtitle" rows="2" placeholder="Submit a quick application…" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring" /></div>
                     </CardContent>
                 </Card>
 
@@ -263,8 +260,7 @@ const iconOptions = ['UserPlus', 'Search', 'CheckCircle', 'Briefcase', 'Star', '
                         </div>
                         <div class="space-y-1.5">
                             <Label>Subtitle</Label>
-                            <Textarea v-model="form.cta_subtitle" rows="2" placeholder="Join thousands of professionals…" />
-                        </div>
+                            <textarea v-model="form.cta_subtitle" rows="2" placeholder="Join thousands of professionals…" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring" /></div>
                         <div class="space-y-1.5">
                             <Label>Button Label</Label>
                             <Input v-model="form.cta_button" placeholder="Get Started Free" />
