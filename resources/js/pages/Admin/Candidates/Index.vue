@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Link } from '@inertiajs/vue3';
 import { Briefcase, Mail, Phone, Search, User, UserPlus } from 'lucide-vue-next';
 import { onMounted, ref } from 'vue';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -191,8 +192,11 @@ function getAvatarColor(name: string): string {
                                         variant="ghost"
                                         size="sm"
                                         class="h-8 px-3 text-xs opacity-0 group-hover:opacity-100 transition-opacity hover:bg-violet-50 hover:text-violet-700 dark:hover:bg-violet-950/30"
+                                        as-child
                                     >
-                                        View Profile
+                                        <Link :href="`/admin/candidates/${c.uuid}`">
+                                            View Profile
+                                        </Link>
                                     </Button>
                                 </td>
                             </tr>

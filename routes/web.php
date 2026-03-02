@@ -23,6 +23,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::inertia('applications', 'Admin/Applications/Index')->name('applications.index');
         Route::inertia('applications/{uuid}', 'Admin/Applications/Show')->name('applications.show');
         Route::inertia('candidates', 'Admin/Candidates/Index')->name('candidates.index');
+        Route::inertia('candidates/{uuid}', 'Admin/Candidates/Show')->name('candidates.show');
     });
 });
 
