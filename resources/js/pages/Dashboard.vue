@@ -9,8 +9,10 @@ import {
     Plus,
     Users,
     Clock,
-    PlayCircle
+    PlayCircle,
+    Eye
 } from 'lucide-vue-next';
+import DashboardAreaChart from '@/components/DashboardAreaChart.vue'; // New component
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -33,21 +35,21 @@ const breadcrumbs: BreadcrumbItem[] = [
 // Mock data for display purposes
 const recentApplications = [
     {
-        id: 1,
+        uuid: '1111-2222-3333-4444',
         candidate: { name: 'Sarah Wilson', email: 'sarah.w@example.com', avatar: '' },
         job: 'Senior Frontend Developer',
         applied_at: '2 hours ago',
         status: 'reviewing',
     },
     {
-        id: 2,
+        uuid: '5555-6666-7777-8888',
         candidate: { name: 'Michael Chen', email: 'm.chen@example.com', avatar: '' },
         job: 'Product Designer',
         applied_at: '4 hours ago',
         status: 'interview',
     },
     {
-        id: 3,
+        uuid: '9999-0000-aaaa-bbbb',
         candidate: { name: 'Emily Davis', email: 'emily.d@example.com', avatar: '' },
         job: 'Senior Frontend Developer',
         applied_at: '1 day ago',
@@ -169,27 +171,21 @@ const getStatusColor = (status: string) => {
             </div>
 
             <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-                <Card class="col-span-4">
+                <Card class="col-span-4 shadow-lg border-0">
                     <CardHeader>
-                        <CardTitle>Hiring Performance</CardTitle>
-                        <CardDescription>Applications over time</CardDescription>
+                        <CardTitle>Hiring Overview</CardTitle>
+                        <CardDescription>Application trends over the last 7 days</CardDescription>
                     </CardHeader>
                     <CardContent class="pl-2">
-                        <div class="h-[200px] w-full flex items-end justify-between space-x-2 px-4">
-                             <!-- Simple CSS Bar Chart Placeholder -->
-                             <div class="w-full bg-slate-100 rounded-md h-full relative overflow-hidden flex items-end justify-around py-2">
-                                <div class="w-8 bg-blue-500 rounded-t-sm h-[40%] hover:opacity-80 transition-all cursor-pointer" title="Mon"></div>
-                                <div class="w-8 bg-blue-500 rounded-t-sm h-[70%] hover:opacity-80 transition-all cursor-pointer" title="Tue"></div>
-                                <div class="w-8 bg-blue-500 rounded-t-sm h-[50%] hover:opacity-80 transition-all cursor-pointer" title="Wed"></div>
-                                <div class="w-8 bg-blue-500 rounded-t-sm h-[90%] hover:opacity-80 transition-all cursor-pointer" title="Thu"></div>
-                                <div class="w-8 bg-blue-500 rounded-t-sm h-[60%] hover:opacity-80 transition-all cursor-pointer" title="Fri"></div>
-                                <div class="w-8 bg-blue-500 rounded-t-sm h-[80%] hover:opacity-80 transition-all cursor-pointer" title="Sat"></div>
-                                <div class="w-8 bg-blue-500 rounded-t-sm h-[55%] hover:opacity-80 transition-all cursor-pointer" title="Sun"></div>
-                             </div>
-                        </div>
+                        <DashboardAreaChart
+                            :data="[12, 18, 15, 25, 20, 32, 28]"
+                            :labels="['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']"
+                            color="#8b5cf6"
+                            :height="300"
+                        />
                     </CardContent>
                 </Card>
-                <Card class="col-span-3">
+                <Card class="col-span-3 shadow-lg border-0">
                      <CardHeader>
                         <CardTitle>Recent Applications</CardTitle>
                         <CardDescription>
@@ -198,22 +194,27 @@ const getStatusColor = (status: string) => {
                     </CardHeader>
                     <CardContent>
                         <div class="space-y-8">
-                            <div v-for="application in recentApplications" :key="application.id" class="flex items-center">
+                            <div v-for="application in recentApplications" :key="application.uuid" class="flex items-center">
                                 <Avatar class="h-9 w-9">
                                     <AvatarImage :src="application.candidate.avatar" :alt="application.candidate.name" />
                                     <AvatarFallback>{{ application.candidate.name.split(' ').map(n => n[0]).join('') }}</AvatarFallback>
                                 </Avatar>
                                 <div class="ml-4 space-y-1">
                                     <p class="text-sm font-medium leading-none">{{ application.candidate.name }}</p>
-                                    <p class="text-sm text-muted-foreground">
-                                        Applied for {{ application.job }}
+                                    <p class="text-xs text-muted-foreground">
+                                        {{ application.job }} • <span class="text-xs text-muted-foreground">{{ application.applied_at }}</span>
                                     </p>
                                 </div>
                                 <div class="ml-auto font-medium flex items-center space-x-2">
                                     <Badge variant="outline" :class="getStatusColor(application.status)">
                                         {{ application.status.charAt(0).toUpperCase() + application.status.slice(1) }}
                                     </Badge>
-                                    <Button variant="ghost" size="icon" title="Video Details">
+                                    <Button variant="ghost" size="icon" title="View Application" as-child>
+                                        <Link :href="admin.applications.show({ uuid: application.uuid })">
+                                            <Eye class="h-4 w-4 text-muted-foreground hover:text-primary" />
+                                        </Link>
+                                    </Button>
+                                    <Button variant="ghost" size="icon" title="Video Introduction">
                                         <PlayCircle class="h-4 w-4 text-muted-foreground hover:text-primary" />
                                     </Button>
                                 </div>
