@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\CandidateController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\JobController;
 use App\Http\Controllers\Api\Public\CareerController;
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -51,5 +52,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::prefix('candidates')->group(function () {
         Route::get('/', [CandidateController::class, 'index']);
         Route::get('{uuid}', [CandidateController::class, 'show']);
+    });
+
+    // Users (admin only)
+    Route::middleware('admin')->prefix('users')->group(function () {
+        Route::get('/', [UserController::class, 'index']);
+        Route::patch('{id}/role', [UserController::class, 'updateRole']);
     });
 });

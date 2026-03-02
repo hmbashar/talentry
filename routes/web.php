@@ -24,6 +24,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('applications/{uuid}', fn (string $uuid) => inertia('Admin/Applications/Show', ['uuid' => $uuid]))->name('applications.show');
         Route::inertia('candidates', 'Admin/Candidates/Index')->name('candidates.index');
         Route::get('candidates/{uuid}', fn (string $uuid) => inertia('Admin/Candidates/Show', ['uuid' => $uuid]))->name('candidates.show');
+
+        // Admin-only
+        Route::middleware('admin')->group(function () {
+            Route::inertia('users', 'Admin/Users/Index')->name('users.index');
+        });
     });
 });
 

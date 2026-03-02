@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3';
-import { Briefcase, FileText, LayoutGrid, Users } from 'lucide-vue-next';
+import { Link, usePage } from '@inertiajs/vue3';
+import { Briefcase, FileText, LayoutGrid, ShieldCheck, Users } from 'lucide-vue-next';
+import { computed } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
@@ -16,9 +17,13 @@ import {
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import admin from '@/routes/admin';
-import type { NavItem } from '@/types';
+import type { NavItem, User } from '@/types';
 
-const mainNavItems: NavItem[] = [
+const page = usePage();
+const user = computed(() => page.props.auth.user as User);
+const isAdmin = computed(() => user.value?.role === 'admin');
+
+const mainNavItems = computed<NavItem[]>(() => [
     {
         title: 'Dashboard',
         href: dashboard(),
@@ -39,7 +44,14 @@ const mainNavItems: NavItem[] = [
         href: admin.candidates.index(),
         icon: Users,
     },
-];
+    ...(isAdmin.value
+        ? [{
+            title: 'Users',
+            href: '/admin/users',
+            icon: ShieldCheck,
+          }]
+        : []),
+]);
 
 const footerNavItems: NavItem[] = [];
 </script>
