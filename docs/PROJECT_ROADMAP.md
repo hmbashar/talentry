@@ -23,52 +23,67 @@
 
 ### ✅ Implemented
 
-_Nothing yet — building now._
-
-### 🔧 In Progress
-
 #### Authentication & Authorization
 - Admin login + Recruiter login (via Laravel Fortify)
 - Role-based access control (`admin`, `recruiter`)
 - Policies for Jobs and Applications
 - Role middleware (`EnsureIsAdmin`, `EnsureIsRecruiter`)
+- 2FA support (Fortify)
+- Premium split-panel auth layout (login / register pages)
 
 #### Job Management
-- Create / Edit / Delete job postings
+- Create / Edit / Delete job postings (soft delete)
 - Rich text description
-- Employment type (Full-time, Part-time, Contract, Remote)
-- Location field
-- Deadline date
-- Publish / Draft status toggle
+- Employment type: Full-time, Part-time, Contract, Remote
+- Location field, deadline date
+- Publish / Draft status toggle via API
 
 #### Public Career Page
-- Public job listing (no auth required)
-- Job detail page
-- Application form with resume upload (PDF/DOC)
-- Basic validation
+- Public job listing with live search + employment-type filter
+- Job detail page with company info
+- Application form with resume upload (PDF/DOC/DOCX, max 5MB)
+- Full validation + error display
+- Success state after apply
 
 #### Candidate & Application Management
-- Candidate storage (auto-created on apply)
+- Candidate auto-created on apply (found-or-create by email)
 - Application linked to job posting
-- Application statuses: Applied → Shortlisted → Interview → Rejected → Hired
+- Status pipeline: Applied → Shortlisted → Interview → Rejected → Hired
 - Status update from admin panel
-- Internal notes per application (recruiter-only)
+- Internal recruiter notes per application
+- Candidate profile page with application history + count badge
 
 #### Admin Dashboard
-- Total jobs count
-- Total applications count
-- Applications per job
-- Status breakdown stats
+- Total jobs, applications, candidates counts
+- Applications by status breakdown
+- Employment type breakdown
 
-#### Architecture (SaaS-Ready)
-- Repository pattern
-- Service layer
-- Form Request validation
-- API Resources
-- UUID for all main models
-- Soft deletes
-- `company_id` nullable column on all primary tables (for future SaaS)
-- Clean migration structure
+#### Homepage (Public)
+- Live data: latest 6 jobs, stats (counts + employment types)
+- How It Works steps, CTA sections, branded footer
+- **All text editable from admin CMS panel** (HomepageSetting model)
+
+#### Admin CMS
+- Homepage Settings page at `/admin/settings/homepage`
+- Edit all page sections: hero, stats labels, How It Works steps, apply section, CTA, footer links
+- Backed by `homepage_settings` table with JSON `content` column
+- Auto-seeds defaults on first homepage visit
+
+#### Architecture
+- Repository pattern (Job, Application, Candidate repos with interfaces)
+- Service layer (ApplicationService, CandidateService, DashboardService)
+- Form Request validation for all inputs
+- API Resources for JSON responses
+- UUID on all public-facing models
+- Soft deletes on JobPosting and Application
+- `company_id` nullable on primary tables (SaaS-ready)
+- 71 passing Pest feature tests
+
+### 🔧 In Progress / Remaining for v1.0
+
+- [ ] Fix `RegistrationTest > new users can register` (pre-existing failure)
+- [ ] Email verification flow polish
+- [ ] Company profile (logo upload) for recruiters
 
 ---
 

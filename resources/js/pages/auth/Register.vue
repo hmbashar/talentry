@@ -98,7 +98,7 @@ import { store } from '@/routes/register';
                 Already have an account?
                 <TextLink
                     :href="login()"
-                    class="underline underline-offset-4"
+                    class="underline underline-offset-4 text-zinc-800"
                     :tabindex="6"
                     >Log in</TextLink
                 >
