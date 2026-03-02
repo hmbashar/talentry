@@ -15,6 +15,7 @@ class CandidateResource extends JsonResource
             'email' => $this->email,
             'phone' => $this->phone,
             'applications_count' => $this->whenCounted('applications'),
+            'applications' => ApplicationResource::collection($this->whenLoaded('applications')),
             'created_at' => $this->created_at->toDateTimeString(),
         ];
     }

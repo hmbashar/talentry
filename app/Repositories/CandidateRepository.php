@@ -12,7 +12,6 @@ class CandidateRepository implements CandidateRepositoryInterface
     public function all(array $filters = []): LengthAwarePaginator
     {
         return Candidate::query()
-            ->with(['applications.jobPosting'])
             ->withCount('applications')
             ->when(isset($filters['search']), fn ($q) => $q->where(function ($q) use ($filters) {
                 $q->where('name', 'like', '%'.$filters['search'].'%')
