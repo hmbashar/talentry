@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { onMounted } from 'vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { useDashboardStore } from '@/stores/dashboard.store';
-import { onMounted } from 'vue';
 
 const dashboardStore = useDashboardStore();
 onMounted(() => dashboardStore.fetchStats());

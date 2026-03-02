@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { Link, router } from '@inertiajs/vue3';
+import { onMounted, ref } from 'vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { useJobStore } from '@/stores/job.store';
-import { onMounted, ref } from 'vue';
 
 const jobStore = useJobStore();
 const statusFilter = ref('');

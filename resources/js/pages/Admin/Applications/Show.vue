@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { onMounted, ref } from 'vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { useApplicationStore } from '@/stores/application.store';
-import { onMounted, ref } from 'vue';
 
 const props = defineProps<{ uuid: string }>();
 const applicationStore = useApplicationStore();

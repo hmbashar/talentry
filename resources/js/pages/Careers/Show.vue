@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import api from '@/lib/api';
 import { onMounted, ref } from 'vue';
+import api from '@/lib/api';
 
 const props = defineProps<{ uuid: string }>();
 

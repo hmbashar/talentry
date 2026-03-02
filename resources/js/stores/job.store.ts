@@ -1,6 +1,6 @@
-import api from '@/lib/api';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
+import api from '@/lib/api';
 
 export const useJobStore = defineStore('jobs', () => {
     const jobs = ref<any[]>([]);
