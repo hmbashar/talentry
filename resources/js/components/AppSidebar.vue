@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
-import { Briefcase, FileText, LayoutGrid, ShieldCheck, Users } from 'lucide-vue-next';
+import { Briefcase, FileText, LayoutGrid, Settings, ShieldCheck, Users } from 'lucide-vue-next';
 import { computed } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
@@ -45,11 +45,18 @@ const mainNavItems = computed<NavItem[]>(() => [
         icon: Users,
     },
     ...(isAdmin.value
-        ? [{
-            title: 'Users',
-            href: '/admin/users',
-            icon: ShieldCheck,
-          }]
+        ? [
+            {
+                title: 'Users',
+                href: '/admin/users',
+                icon: ShieldCheck,
+            },
+            {
+                title: 'Settings',
+                href: '/admin/settings/homepage',
+                icon: Settings,
+            },
+          ]
         : []),
 ]);
 

@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\ApplicationController;
 use App\Http\Controllers\Api\CandidateController;
 use App\Http\Controllers\Api\DashboardController;
+use App\Http\Controllers\Api\HomepageSettingController;
 use App\Http\Controllers\Api\JobController;
 use App\Http\Controllers\Api\Public\CareerController;
 use App\Http\Controllers\Api\UserController;
@@ -58,5 +59,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::middleware('admin')->prefix('users')->group(function () {
         Route::get('/', [UserController::class, 'index']);
         Route::patch('{id}/role', [UserController::class, 'updateRole']);
+    });
+
+    // Homepage Settings (admin only)
+    Route::middleware('admin')->prefix('homepage-settings')->group(function () {
+        Route::get('/', [HomepageSettingController::class, 'show']);
+        Route::patch('/', [HomepageSettingController::class, 'update']);
     });
 });

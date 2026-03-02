@@ -1,11 +1,10 @@
 <?php
 
+use App\Http\Controllers\HomepageController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 
-Route::inertia('/', 'Welcome', [
-    'canRegister' => Features::enabled(Features::registration()),
-])->name('home');
+Route::get('/', HomepageController::class)->name('home');
 
 // Public Career Pages
 Route::inertia('/careers', 'Careers/Index')->name('careers.index');
@@ -28,6 +27,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Admin-only
         Route::middleware('admin')->group(function () {
             Route::inertia('users', 'Admin/Users/Index')->name('users.index');
+            Route::inertia('settings/homepage', 'Admin/Settings/Homepage')->name('settings.homepage');
         });
     });
 });
