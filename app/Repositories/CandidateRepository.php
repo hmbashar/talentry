@@ -24,6 +24,7 @@ class CandidateRepository implements CandidateRepositoryInterface
     public function findByUuid(string $uuid): Candidate
     {
         return Candidate::query()
+            ->withCount('applications')
             ->with(['applications.jobPosting'])
             ->where('uuid', $uuid)
             ->firstOrFail();
