@@ -19,7 +19,7 @@ defineProps<Props>();
 
 <template>
     <SidebarGroup
-        :class="`group-data-[collapsible=icon]:p-0 ${$props.class || ''}`"
+        :class="`group-data-[collapsible=icon]:p-0 hidden ${$props.class || ''}`"
     >
         <SidebarGroupContent>
             <SidebarMenu>

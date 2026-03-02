@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Link, router } from '@inertiajs/vue3';
+import { Link } from '@inertiajs/vue3';
 import { onMounted, ref } from 'vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { useJobStore } from '@/stores/job.store';
