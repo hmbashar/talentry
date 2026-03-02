@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Job;
 
 use App\Enums\EmploymentType;
+use App\Models\JobPosting;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
 
@@ -10,7 +11,9 @@ class UpdateJobRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()->can('update', $this->route('job'));
+        $job = JobPosting::where('uuid', $this->route('uuid'))->first();
+
+        return $job && $this->user()->can('update', $job);
     }
 
     public function rules(): array

@@ -62,3 +62,23 @@ it('allows admin to delete a job', function () {
 it('prevents unauthenticated access to jobs api', function () {
     $this->getJson('/api/jobs')->assertUnauthorized();
 });
+
+it('allows owner recruiter to update their job', function () {
+    $recruiter = User::factory()->recruiter()->create();
+    $job = JobPosting::factory()->draft()->create(['user_id' => $recruiter->id]);
+
+    $this->actingAs($recruiter, 'sanctum')
+        ->putJson("/api/jobs/{$job->uuid}", ['title' => 'Updated Title'])
+        ->assertOk()
+        ->assertJsonPath('data.title', 'Updated Title');
+});
+
+it('prevents a recruiter from updating another recruiters job', function () {
+    $owner = User::factory()->recruiter()->create();
+    $other = User::factory()->recruiter()->create();
+    $job = JobPosting::factory()->draft()->create(['user_id' => $owner->id]);
+
+    $this->actingAs($other, 'sanctum')
+        ->putJson("/api/jobs/{$job->uuid}", ['title' => 'Hijacked Title'])
+        ->assertForbidden();
+});
